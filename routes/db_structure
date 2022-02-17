@@ -1,0 +1,218 @@
+collection
+
+pizza:{
+varieties:[
+    {"Veg Pizzas":[ {
+        "name":"Margherita",
+        "amount":250,
+        "image":"https://static.toiimg.com/thumb/56868564.cms?imgsize=1948751&width=800&height=800",
+        "variety":"vegPizza",
+"availability":200
+    },{
+        name:"Peppy Paneer",
+        amount:190,
+        image:'https://local-cart.com/wp-content/uploads/2021/04/pepppy-paneer-pizza.jpg'
+    },{
+        name:"Deluxe Veggie",
+        amount:300,
+        image:'https://www.killingthyme.net/wp-content/uploads/2020/09/veggie-deluxe-pizza-5.jpg'
+    },{
+        name:"Veg Extravaganza",
+        amount:285,
+        image:'https://www.cafepizzacorner.com/wp-content/uploads/2016/02/veg-extra.jpg'
+    },{
+        name:"Mexican Green Wave",
+        amount:220,
+        image:'https://everydaypizza.in/wp-content/uploads/2021/08/maxican-wave-pizza.jpg'
+    },{
+        name:"Cheese & Corn",
+        amount:200,
+        image:'https://api.pizzahut.io/v1/content/en-in/in-1/images/pizza/corn.4f5188ab4391cb45d4a4ed9e849f1e32.1.jpg'
+    }]},
+    {"Non-Veg Pizzas":[{
+        name:"Barbecue Chicken",
+        amount:450,
+        image:'https://food.fnr.sndimg.com/content/dam/images/food/fullset/2012/2/28/1/FNM_040112-Copy-That-002_s4x3.jpg.rend.hgtvcom.616.462.suffix/1382541346030.jpeg'
+    },{
+        name:"Chicken Sausage",
+        amount:290,
+        image:'https://www.alfrescochicken.com/wp-content/uploads/2019/07/Jenny-With-The-Good-Eats-BBQ-Chicken-Pizza.jpg'
+    },{
+        name:"Chicken golden delight",
+        amount:400,
+        image:'https://www.dominos.co.in//files/items/Chicken_Golden_Delight.jpg'
+    },{
+        name:"Non Veg Supreme",
+        amount:385,
+        image:'https://www.dominos.co.in//files/items/Non-Veg_Supreme.jpg'
+    },{
+        name:"Chicken fiesta",
+        amount:220,
+        image:'http://feenix.co.in/wp-content/uploads/2018/02/chunky-chicken.jpg'
+    },{
+        name:"Chicken Dominator",
+        amount:200,
+        image:'https://www.dominos.co.in/files/items/IndianChickenTikka.jpg'
+    }]},
+
+    //add image to all of these below
+    {"Custom Pizza":[
+        "Base":[
+            {"name":"Cheese-stuffed crust",
+            "availability":200,
+            "amount":100
+        },
+        {"name":"Thin crust",
+        "availability":200,
+        "amount":110
+    },
+    {"name":"Neapolitan crust",
+    "availability":200,
+    "amount":90
+},
+{"name":"Fluffy crust",
+"availability":200,
+"amount":150
+},
+{"name":"Soft crust",
+"availability":200,
+"amount":140
+}],
+"Sauce":[
+    {"name":"Pesto Sauce",
+    "availability":200,
+    "amount":100
+},
+{"name":"White Garlic Sauce",
+"availability":200,
+"amount":110
+},
+{"name":"Garlic Ranch Sauce",
+"availability":200,
+"amount":90
+},
+{"name":"Marinara Sauce",
+"availability":200,
+"amount":150
+},
+{"name":"Barbeque Sauce",
+"availability":200,
+"amount":140
+}],
+"Cheese":[
+    {"name":"Mozzarella Cheese",
+    "availability":200,
+    "amount":100
+},
+{"name":"Gouda Cheese",
+"availability":200,
+"amount":110
+},
+{"name":"Feta Cheese",
+"availability":200,
+"amount":90
+},
+{"name":"Parmesan Cheese",
+"availability":200,
+"amount":150
+}],
+
+"Veggies":[
+    {"name":"Carrot",
+    "availability":200,
+    "amount":100
+},
+{"name":"Tomato",
+"availability":200,
+"amount":110
+},
+{"name":"Onion",
+"availability":200,
+"amount":90
+},
+{"name":"Spinach",
+"availability":200,
+"amount":150
+},
+{"name":"Mushroom",
+    "availability":200,
+    "amount":100
+},
+{"name":"Broccoli",
+"availability":200,
+"amount":110
+},
+{"name":"Sweet Potato",
+"availability":200,
+"amount":90
+}],
+"Meat":[
+    {"name":"Prosciutto",
+    "availability":200,
+    "amount":100
+},
+{"name":"Meat sausage",
+"availability":200,
+"amount":110
+},
+{"name":"Buffalo chicken",
+"availability":200,
+"amount":90
+},
+{"name":"Bacon",
+"availability":200,
+"amount":150
+},
+{"name":"Pepperoni",
+    "availability":200,
+    "amount":100
+},
+{"name":"Chicken sausage",
+"availability":200,
+"amount":110
+},
+{"name":"Chicken tikka",
+"availability":200,
+"amount":90
+}],   
+            
+    ]}
+   ]
+}
+
+
+//////////////////////
+
+Cart:[{
+"email":"",
+"items":[{
+"name":,
+"amount":,
+"vegCount":,
+"nonVegCount":
+},
+{}],
+"cartTotal":0
+},
+{}]
+
+
+//////////////////////
+
+
+Orders:[{
+    "email":"",
+    "orders":[
+        {"order_id":"",
+            "items":[{
+        "name":,
+        "amount":,
+        },
+        {}],
+        "orderTotal":0,
+        "orderStatus":"",
+        "date":,
+        "paymentStatus":
+        },{}]
+,
+}]
