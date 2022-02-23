@@ -22,7 +22,7 @@ var createToken = async (userToken,email)=>{
     },
     secret,
     {
-        expiresIn:"60m"
+        expiresIn:"1440m"
     }
     )
     return token

@@ -1,7 +1,8 @@
 var express = require('express');
 var router = express.Router();
 const { MongoClient, dbName } = require('../dbSchema')
-// const {encryptedPassword,decryptComparePassword,createToken,sessionToken} = require('../authenticate')
+const JWTD = require('jwt-decode');
+const {encryptedPassword,decryptComparePassword,createToken,sessionToken} = require('../authenticate')
 
 require('dotenv').config()
 
@@ -14,7 +15,35 @@ router.get('/get-menu', async (req, res) => {
     if (menuDetails.length > 0) {
       res.json({
         statusCode: 200,
-        data: menuDetails
+        body: menuDetails
+      })
+    }
+    else {
+      res.json({
+        statusCode: 400,
+        message: "No records found!"
+      })
+    }
+  }
+  catch (error) {
+    console.log(error)
+    res.json({
+      statusCode: 500,
+      message: "Internal Server Error"
+    })
+  }
+})
+
+router.get('/get-custom-menu', async (req, res) => {
+  const client = await MongoClient.connect(process.env.MONGODB_URL)
+  try {
+    let dbClient =  await client.db(dbName)
+    let menuDetails = await dbClient.collection('pizza').find({variety:"customPizza"}).toArray();
+    // console.log(menuDetails)
+    if (menuDetails.length > 0) {
+      res.json({
+        statusCode: 200,
+        body: menuDetails
       })
     }
     else {
@@ -66,81 +95,178 @@ router.post('/new-item', async (req, res) => {
   }
 })
 
-// router.post('/add-cart/:token/:id', async (req, res) => {
-//     const client = await MongoClient.connect(process.env.MONGODB_URL)
-//     try {
-//       let dbClient =  await client.db(dbName)
-//       let decodedToken = JWTD(req.params.token);
-//       let cartDetails = await dbClient.collection('cart').findOne({email: decodedToken.email })
-//       let vCount=0,nvCount=0;
-//       if(req.params.id == 3)
-//       vCount++;
-//       if(req.params.id == 4)
-//       nvCount++;
-//       const {name,amount} = req.body.item;
-//       if (cartDetails.length > 0) {
-//           let updadedItems = [...cartDetails.items,{name,amount}];
-//           let newTotal =0;
-//           if((req.params.id == 3 && cartDetails.vegCount<2) || (req.params.id == 4 && cartDetails.nonVegCount<1))
-//            newTotal = parseInt(cartDetails.cartTotal)+ 0 ;
-// else
-//            newTotal = parseInt(cartDetails.cartTotal)+parseInt(amount);
-//         await dbClient.collection('cart').updateOne({ email: decodedToken.email },{ $set: { "items" : updadedItems , "cartTotal":newTotal,"vegCount":cartDetails.vegCount+vCount,"nonVegCount":cartDetails.nonVegCount+nvCount}})
-//         res.json({
-//           statusCode: 200,
-//           message: "Item added to cart successfully!"
-//         })
-//       }
-//       else {
-//         const newCart = {
-//             email: decodedToken.email,
-//           items:[{name,amount}],
-//           cartTotal:amount
-//         }
-//         await dbClient.collection('cart').insertOne(newCart);
-//         res.json({
-//             statusCode: 200,
-//             message: "Item added to cart successfully!"
-//           })
-//     }
-//       }
-//     catch (error) {
-//       console.log(error)
-//       res.json({
-//         statusCode: 500,
-//         message: "Internal Server Error"
-//       })
-//     }
-//   })
+router.post('/add-cart/:token', async (req, res) => {
+    const client = await MongoClient.connect(process.env.MONGODB_URL)
+    try {
+      let dbClient =  await client.db(dbName)
+      let decodedToken = JWTD(req.params.token);
+      let cartDetails = await dbClient.collection('cart').findOne({email: decodedToken.email })
+      const {name,amount,image,category,variety} = req.body;
+      if (cartDetails && cartDetails.items.length>0) {
+        let itemNameMatch = await cartDetails.items.filter((e)=> e.name == name);
+if(itemNameMatch.length>0)
+{
+  res.json({
+    statusCode: 200,
+    message: "Item already in cart!"
+  })
+}
+else{
+        let veggiesCount = await cartDetails.items.filter((e)=> e.category =='veggies').length;
+let meatCount = await cartDetails.items.filter((e)=> e.category =='meat').length;
+          let updadedItems = [...cartDetails.items,{name,amount,image,category,variety,quantity:1}];
+          let newTotal =0;
+          if((veggiesCount<3 && category == "veggies") || (meatCount<1 && category=="meat"))
+           newTotal = parseInt(cartDetails.cartTotal)+ 0 ;
+else
+           newTotal = parseInt(cartDetails.cartTotal)+parseInt(amount);
+        await dbClient.collection('cart').updateOne({ email: decodedToken.email },{ $set: { "items" : updadedItems , "cartTotal":newTotal}})
+        res.json({
+          statusCode: 200,
+          message: "Item added to cart successfully!"
+        })
+      }
+    }
+      else {
+        await dbClient.collection('cart').deleteOne({ email: decodedToken.email })
+        const newCart = {
+            email: decodedToken.email,
+          items:[{name,amount : parseInt(amount),image,variety,category,quantity:1}],
+          cartTotal : parseInt(amount)
+        }
+        await dbClient.collection('cart').insertOne(newCart);
+        res.json({
+            statusCode: 200,
+            message: "Cart created & Item added to cart successfully!"
+          })
+    }
+      }
+    catch (error) {
+      console.log(error)
+      res.json({
+        statusCode: 500,
+        message: "Invalid token / Internal Server Error , Please Login again and try"
+      })
+    }
+  })
 
-// router.get('/view-cart/:token', async (req, res) => {
-//     const client = await MongoClient.connect(process.env.MONGODB_URL)
-//     try {
-//       let dbClient =  await client.db(dbName)
-//       let decodedToken = JWTD(req.params.token);
-//       let cartDetails = await dbClient.collection('cart').findOne({email: decodedToken.email })
-//       if (cartDetails.length > 0) {
-//         res.json({
-//           statusCode: 200,
-//           body: cartDetails
-//         })
-//       }
-//       else {
-//         res.json({
-//           statusCode: 400,
-//           message: "Your Cart is Empty!"
-//         })
-//       }
-//     }
-//     catch (error) {
-//       console.log(error)
-//       res.json({
-//         statusCode: 500,
-//         message: "Internal Server Error"
-//       })
-//     }
-//   })
+router.get('/view-cart/:token', async (req, res) => {
+    const client = await MongoClient.connect(process.env.MONGODB_URL)
+    try {
+      let dbClient =  await client.db(dbName)
+      let decodedToken = JWTD(req.params.token);
+      let cartDetails = await dbClient.collection('cart').findOne({email: decodedToken.email })
+      if (cartDetails) {
+        res.json({
+          statusCode: 200,
+          body: cartDetails
+        })
+      }
+      else {
+        res.json({
+          statusCode: 400,
+          message: "Your Cart is Empty!"
+        })
+      }
+    }
+    catch (error) {
+      console.log(error)
+      res.json({
+        statusCode: 500,
+        message: "Internal Server Error"
+      })
+    }
+  })
 
+router.post('/delete-item/:token', async (req, res) => {
+  const client = await MongoClient.connect(process.env.MONGODB_URL)
+  try {
+    let dbClient = await client.db(dbName)
+    let decodedToken = JWTD(req.params.token);
+    let cartDetails = await dbClient.collection('cart').findOne({ email: decodedToken.email })
+    const { name, amount, category, quantity } = req.body;
+    if (cartDetails) {
+      let updatedItems = await cartDetails.items.filter((e) => e.name != name);
+      let veggiesCount = await cartDetails.items.filter((e) => e.category == 'veggies').length;
+      let meatCount = await cartDetails.items.filter((e) => e.category == 'meat').length;
+      let updatedAmout = 0;
+      if ((veggiesCount <= 3 && category == "veggies") || (meatCount <= 1 && category == "meat"))
+        updatedAmout = parseInt(cartDetails.cartTotal) - 0;
+      else
+        updatedAmout = parseInt(cartDetails.cartTotal) - (parseInt(amount) * parseInt(quantity))
+      if (updatedItems) {
+        await dbClient.collection('cart').updateOne({ email: decodedToken.email }, { $set: { "items": [...updatedItems], "cartTotal": updatedAmout } })
+        res.json({
+          statusCode: 200,
+          message: "Item deleted successfully!",
+          body: updatedItems
+        })
+      }
+      else {
+        res.json({
+          statusCode: 404,
+          message: "No item found"
+        })
+      }
+    }
+    else {
+      res.json({
+        statusCode: 404,
+        message: "No item found"
+      })
+    }
+  }
+  catch (error) {
+    console.log(error)
+    res.json({
+      statusCode: 500,
+      message: "Invalid token / Internal Server Error , Please Login again and try"
+    })
+  }
+}) 
+
+router.post('/quantity-update/:token', async (req, res) => {
+  const client = await MongoClient.connect(process.env.MONGODB_URL)
+  try {
+    let dbClient = await client.db(dbName)
+    let decodedToken = JWTD(req.params.token);
+    let cartDetails = await dbClient.collection('cart').findOne({ email: decodedToken.email })
+    const { name, amount, quantity } = req.body;
+    if (cartDetails) {
+      let currentItem = await cartDetails.items.filter((e) => e.name == name);
+      if (currentItem[0]) {
+        const updatedAmout = parseInt(cartDetails.cartTotal) - parseInt(currentItem[0].quantity) * parseInt(currentItem[0].amount) + parseInt(quantity) * parseInt(amount);
+        console.log(updatedAmout);
+        const currIndex = cartDetails.items.map((e) => e.name).indexOf(currentItem[0].name);
+        cartDetails.items[currIndex].quantity = quantity;
+        await dbClient.collection('cart').updateOne({ email: decodedToken.email }, { $set: { "items": cartDetails.items, "cartTotal": updatedAmout } })
+        res.json({
+          statusCode: 200,
+          message: "Quantity updated!"
+        })
+      }
+      else {
+        res.json({
+          statusCode: 404,
+          message: "No item found"
+        })
+      }
+    }
+    else {
+      res.json({
+        statusCode: 404,
+        message: "No item found"
+      })
+    }
+  }
+  catch (error) {
+    console.log(error)
+    res.json({
+      statusCode: 500,
+      message: "Invalid token / Internal Server Error , Please Login again and try"
+    })
+  }
+})
 // router.post('/place-order/:token', async (req, res) => {
 //     const client = await MongoClient.connect(process.env.MONGODB_URL)
 //     try {
