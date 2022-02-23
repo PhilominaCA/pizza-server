@@ -90,8 +90,8 @@ router.post('/activation-email/:useremail', async (req, res) => {
         subject: 'Activation Link',
         html: `<p>Hi ${userDetails.firstName},</p>
        <p> Kindly click on the below link to activate your account.</p>
-       <p> Account Activation Link : http://localhost:3000/account-activation/${genUserToken}</p><br/>
-        <p>Thank you,</p>
+       <p> Account Activation Link : https://cranky-johnson-c08cde.netlify.app/account-activation/${genUserToken}</p><br/>
+       <p>Thank you,</p>
         <p>NodeAuth Team</p>`,
      }
      sendgrid
@@ -124,6 +124,7 @@ router.post('/activation-email/:useremail', async (req, res) => {
     })
   }
 })
+//       <p> Account Activation Link : http://localhost:3000/account-activation/${genUserToken}</p><br/>
 
 router.post('/account-activation/:token', async (req, res) => {
   const client = await MongoClient.connect(process.env.MONGODB_URL)
@@ -256,7 +257,7 @@ router.post('/forgot-password', async (req, res) => {
         subject: 'Password Reset Link',
         html: `<p>Hi ${userDetails.firstName},</p>
        <p> Kindly click on the below link to reset your password.</p>
-       <p> Password Reset Link : http://localhost:3000/reset-password/${genUserToken}</p>
+       <p> Password Reset Link : https://cranky-johnson-c08cde.netlify.app/reset-password/${genUserToken}</p>
         <p><strong>Please not that this link will expire within 1 hour.</strong></p>
         <p>Thank you,</p>
         <p>NodeAuth Team</p>`,
@@ -291,6 +292,9 @@ router.post('/forgot-password', async (req, res) => {
     })
   }
 })
+
+      //  <p> Password Reset Link : http://localhost:3000/reset-password/${genUserToken}</p>
+
 
 router.post('/reset-password/:token', async (req, res,next) => {
   const client = await MongoClient.connect(process.env.MONGODB_URL)
@@ -333,3 +337,5 @@ router.post('/reset-password/:token', async (req, res,next) => {
 })
 
 module.exports = router;
+
+
